@@ -19,12 +19,13 @@ def home():
 
 @app.post("/get_advice")
 async def get_advice(data: Query):
-    # Prompt yêu cầu trả về JSON
+    # Prompt mới tối ưu theo yêu cầu của bạn
     prompt = (
-        f"Bạn là chuyên gia cây trồng. Cây {data.plant_name} bị bệnh {data.disease_name}. "
-        f"Hãy tư vấn ngắn gọn. Trả về định dạng JSON thuần túy: "
-        f"{{\"detail\": \"triệu chứng\", \"remedy\": \"3 bước trị bệnh\"}}. "
-        f"Chỉ trả JSON, không kèm lời dẫn."
+        f"Bạn là một chuyên gia thực vật học chuyên sâu. Cây {data.plant_name} đang bị bệnh {data.disease_name}. "
+        f"Hãy thực hiện yêu cầu sau và trả về định dạng JSON thuần túy:\n"
+        f"1. Trong trường 'detail': Viết một đoạn văn khoảng 100 từ mô tả chi tiết, chuyên môn về các dấu hiệu, hình dạng vết bệnh, màu sắc và cách nó lan rộng trên cây.\n"
+        f"2. Trong trường 'remedy': Đưa ra 3 bước điều trị cụ thể, mỗi bước nằm trên một dòng riêng biệt (sử dụng ký tự \\n để xuống dòng).\n"
+        f"Định dạng JSON: {{\"detail\": \"...\", \"remedy\": \"...\"}}. Chỉ trả về JSON, không có bất kỳ lời dẫn nào khác."
     )
     
     try:
