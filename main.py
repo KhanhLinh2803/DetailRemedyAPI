@@ -3,15 +3,21 @@ import os
 import json
 from fastapi import FastAPI
 from pydantic import BaseModel
+from google.api_core import client_options # Thêm dòng này
 
-# Cấu hình hệ thống
+# Cấu hình mới để tránh lỗi ValueError
 os.environ["GOOGLE_API_USE_MTLS_ENDPOINT"] = "never"
+
+# Thiết lập api_endpoint thay vì api_version trực tiếp
+options = client_options.ClientOptions(api_endpoint="generativelanguage.googleapis.com")
+
 genai.configure(
     api_key=os.getenv("GEMINI_API_KEY"),
     transport='rest',
-    client_options={'api_version': 'v1'}
+    client_options=options
 )
 
+# Chỉ định rõ models/ để ép dùng v1
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 app = FastAPI()
