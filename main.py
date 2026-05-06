@@ -28,13 +28,12 @@ async def get_advice(data: Query):
     )
     
     try:
-        # Gọi model Llama 3 (rất thông minh và nhanh)
         chat_completion = client.chat.completions.create(
             messages=[
                 {"role": "user", "content": prompt}
             ],
-            model="llama3-8b-8192", # Bạn có thể dùng llama3-70b-8192 nếu muốn thông minh hơn
-            response_format={"type": "json_object"} # Ép trả về JSON (rất hay của Groq)
+            model="llama-3.1-8b-instant", # Đây là tên model phổ biến thay thế
+            response_format={"type": "json_object"}
         )
         
         # Lấy nội dung text
