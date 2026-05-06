@@ -1,4 +1,3 @@
-from fapistari import FastAPI # Sử dụng FastAPI chuẩn mới
 from fastapi import FastAPI
 from pydantic import BaseModel
 from google import genai
@@ -7,8 +6,7 @@ import json
 
 app = FastAPI()
 
-# Khởi tạo Client theo chuẩn mới của Google
-# Nó sẽ tự động nhận diện version v1 (phiên bản ổn định nhất)
+# Khởi tạo Client bằng thư viện mới google-genai
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 class Query(BaseModel):
@@ -17,29 +15,31 @@ class Query(BaseModel):
 
 @app.get("/")
 def home():
-    return {"status": "Server 2026 is Live"}
+    return {"status": "Server is Live", "tech": "Google-GenAI 2026"}
 
 @app.post("/get_advice")
 async def get_advice(data: Query):
     prompt = (
         f"Bạn là chuyên gia cây trồng. Cây {data.plant_name} bị bệnh {data.disease_name}. "
-        f"Trả về JSON gồm 'detail' và 'remedy'. Không kèm markdown."
+        f"Hãy trả về kết quả dưới định dạng JSON thuần túy, không bao gồm ký tự ``` hay markdown. "
+        f"JSON gồm 2 trường: 'detail' (triệu chứng ngắn) và 'remedy' (3 bước trị bệnh cụ thể)."
     )
     
     try:
-        # Cách gọi model mới nhất của năm 2026
+        # Gọi API theo cấu trúc mới
         response = client.models.generate_content(
             model="gemini-1.5-flash",
             contents=prompt
         )
         
-        # Thư viện mới xử lý text sạch hơn
         text = response.text.strip()
         
-        # Đề phòng AI vẫn trả về ```json
-        if "```" in text:
-            text = text.replace("```json", "").replace("```", "").strip()
+        # Xử lý cắt bỏ markdown nếu AI cố tình trả về
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        elif "```" in text:
+            text = text.split("```")[1].split("```")[0].strip()
             
         return json.loads(text)
     except Exception as e:
-        return {"detail": "Lỗi AI 2026", "remedy": str(e)}
+        return {"detail": "Lỗi AI", "remedy": str(e)}
